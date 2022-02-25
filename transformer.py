@@ -76,7 +76,7 @@ class VQGANTransformer(nn.Module):
             # define a mask for the indices which have already been sampled
             unmasked = torch.clamp(indices, 0, 1).type(torch.int)
 
-            n = min(np.ceil(gamma(t/T) * N). N-1)
+            n = min(np.ceil(gamma(t/T) * N), N-1)
             logits = self.transformer(indices)
 
             logits = logits / temperature

@@ -70,13 +70,13 @@ class VQGANTransformer(nn.Module):
         else:
             indices = torch.hstack((condition, torch.zeros((condition.shape[0], N-condition.shape[1]), device="cuda", dtype=torch.int)))
 
-        gamma = self.gamma(mode)
+        gamma = self.gamma_func(mode)
 
         for t in range(T+1):
             # define a mask for the indices which have already been sampled
             unmasked = torch.clamp(indices, 0, 1).type(torch.int)
 
-            n = np.ceil(gamma(t/T) * N)
+            n = min(np.ceil(gamma(t/T) * N). N-1)
             logits = self.transformer(indices)
 
             logits = logits / temperature
@@ -135,7 +135,7 @@ class VQGANTransformer(nn.Module):
         log["rec"] = x_rec
         log["half_sample"] = x_sample
         log["new_sample"] = x_new
-        return log, torch.concat((x, x_rec, x_sample, x_new))
+        return log, torch.cat((x, x_rec, x_sample, x_new))
 
     def indices_to_image(self, indices, p1=16, p2=16):
         ix_to_vectors = self.vqgan.codebook.embedding(indices).reshape(indices.shape[0], p1, p2, 256)
